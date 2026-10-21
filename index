@@ -1,0 +1,670 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Psychiatric Emergency Virtual Lab - Methamphetamine Psychosis</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts: Sarabun & Kanit -->
+    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700&family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        navy: { 800: '#1e293b', 900: '#0f172a' },
+                        medical: {
+                            50: '#f0f9ff',
+                            100: '#e0f2fe',
+                            500: '#0ea5e9',
+                            600: '#0284c7',
+                            700: '#0369a1'
+                        }
+                    },
+                    fontFamily: {
+                        kanit: ['Kanit', 'sans-serif'],
+                        sarabun: ['Sarabun', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Sarabun', sans-serif;
+            background-color: #0f172a;
+            color: #f8fafc;
+        }
+        h1, h2, h3, h4, .font-heading {
+            font-family: 'Kanit', sans-serif;
+        }
+        /* Custom styled sliders */
+        input[type=range] {
+            -webkit-appearance: none;
+            background: #334155;
+            border-radius: 8px;
+            height: 8px;
+        }
+        input[type=range]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            height: 20px;
+            width: 20px;
+            border-radius: 50%;
+            background: #0ea5e9;
+            cursor: pointer;
+            box-shadow: 0 0 10px rgba(14, 165, 233, 0.5);
+            transition: all 0.2s ease;
+        }
+        input[type=range]::-webkit-slider-thumb:hover {
+            scale: 1.2;
+            background: #38bdf8;
+        }
+        .custom-glass {
+            background: rgba(30, 41, 59, 0.7);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        canvas {
+            display: block;
+            width: 100%;
+            height: 100%;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between">
+
+    <!-- Header -->
+    <header class="bg-navy-900 border-b border-slate-800 sticky top-0 z-30 shadow-lg">
+        <div class="max-w-7xl mx-auto px-4 py-3 flex justify-between items-center">
+            <div class="flex items-center space-x-3">
+                <div class="bg-medical-600 p-2 rounded-xl text-white shadow-lg shadow-medical-600/30">
+                    <i class="fa-solid fa-flask-vial text-2xl"></i>
+                </div>
+                <div>
+                    <h1 class="text-lg md:text-xl font-bold tracking-wide text-white">PsyCrisis Lab: Methamphetamine Psychosis</h1>
+                    <p class="text-xs text-slate-400">ห้องทดลองเสมือนจริง: การจำลองการตอบสนองผู้ป่วยก้าวร้าวระแวงและดุร้าย</p>
+                </div>
+            </div>
+            <button onclick="openMissionModal()" class="px-4 py-2 bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white rounded-xl text-xs md:text-sm font-semibold shadow-lg shadow-orange-500/20 flex items-center gap-2 transition duration-200">
+                <i class="fa-solid fa-trophy text-amber-200"></i>
+                <span>โจทย์ท้าทาย (Challenge Mission)</span>
+            </button>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="max-w-7xl mx-auto px-4 py-6 flex-grow w-full grid grid-cols-1 lg:grid-cols-12 gap-6">
+
+        <!-- Left Column: Control Panel (4 cols) -->
+        <section class="lg:col-span-4 space-y-6">
+            
+            <!-- Control Sliders Card -->
+            <div class="custom-glass rounded-2xl p-5 border border-slate-700/50 shadow-xl space-y-5">
+                <div class="flex items-center justify-between border-b border-slate-700 pb-3">
+                    <h2 class="text-base font-bold text-medical-500 flex items-center gap-2">
+                        <i class="fa-solid fa-sliders"></i> แผงควบคุมตัวแปรทางการพยาบาล
+                    </h2>
+                    <span class="text-xs bg-slate-800 text-slate-300 px-2.5 py-1 rounded-md border border-slate-700">Real-time</span>
+                </div>
+
+                <!-- Slider 1: Environmental Stimulation -->
+                <div class="space-y-2">
+                    <div class="flex justify-between items-center text-xs">
+                        <label class="font-medium text-slate-300 flex items-center gap-1.5">
+                            <i class="fa-solid fa-volume-high text-red-400"></i> สิ่งกระตุ้นสิ่งแวดล้อม (Stimulation)
+                        </label>
+                        <span id="val-stim" class="font-bold text-red-400 bg-red-950/50 px-2 py-0.5 rounded border border-red-800/50">80 %</span>
+                    </div>
+                    <input type="range" id="slider-stim" min="10" max="100" value="80" class="w-full" oninput="updateSimulation()">
+                    <div class="flex justify-between text-[10px] text-slate-500">
+                        <span>เงียบสงบ/แยกห้อง</span>
+                        <span>พลุกพล่าน/เสียงดัง</span>
+                    </div>
+                </div>
+
+                <!-- Slider 2: De-escalation Tone & Approach -->
+                <div class="space-y-2">
+                    <div class="flex justify-between items-center text-xs">
+                        <label class="font-medium text-slate-300 flex items-center gap-1.5">
+                            <i class="fa-solid fa-comments text-emerald-400"></i> ท่าที/น้ำเสียงพยาบาล (De-escalation)
+                        </label>
+                        <span id="val-tone" class="font-bold text-emerald-400 bg-emerald-950/50 px-2 py-0.5 rounded border border-emerald-800/50">20 %</span>
+                    </div>
+                    <input type="range" id="slider-tone" min="0" max="100" value="20" class="w-full" oninput="updateSimulation()">
+                    <div class="flex justify-between text-[10px] text-slate-500">
+                        <span>สั่งการ/ท้าทาย</span>
+                        <span>สงบนิ่ง/รับฟัง</span>
+                    </div>
+                </div>
+
+                <!-- Slider 3: Physical Distance -->
+                <div class="space-y-2">
+                    <div class="flex justify-between items-center text-xs">
+                        <label class="font-medium text-slate-300 flex items-center gap-1.5">
+                            <i class="fa-solid fa-ruler-horizontal text-amber-400"></i> ระยะห่างทางกายภาพ (Physical Distance)
+                        </label>
+                        <span id="val-dist" class="font-bold text-amber-400 bg-amber-950/50 px-2 py-0.5 rounded border border-amber-800/50">0.8 เมตร</span>
+                    </div>
+                    <input type="range" id="slider-dist" min="0.5" max="4.0" step="0.1" value="0.8" class="w-full" oninput="updateSimulation()">
+                    <div class="flex justify-between text-[10px] text-slate-500">
+                        <span>ชิดตัว (< 1m)</span>
+                        <span>ระยะปลอดภัย (2-3m+)</span>
+                    </div>
+                </div>
+
+                <!-- Reset Button -->
+                <button onclick="resetSliders()" class="w-full py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl text-xs font-semibold border border-slate-700 transition flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-rotate-left"></i> รีเซ็ตค่าเริ่มต้น
+                </button>
+            </div>
+
+            <!-- Mathematical Model / Formula Box -->
+            <div class="custom-glass rounded-2xl p-5 border border-slate-700/50 shadow-xl space-y-3">
+                <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider flex items-center gap-2">
+                    <i class="fa-solid fa-calculator text-medical-500"></i> แบบจำลองคณิตศาสตร์ความก้าวร้าว (Aggression Model)
+                </h3>
+                
+                <div class="bg-navy-900/90 p-3 rounded-xl border border-slate-800 font-mono text-xs text-sky-300 overflow-x-auto">
+                    Aggression Index (AGI) = <br>
+                    <span class="text-red-400">(Stim × 0.45)</span> + 
+                    <span class="text-amber-400">(1 / Dist × 20)</span> - 
+                    <span class="text-emerald-400">(Tone × 0.5)</span> + Amphet_Bonus
+                </div>
+
+                <!-- Live Calculated Metrics -->
+                <div class="grid grid-cols-2 gap-3 pt-2">
+                    <div class="bg-slate-800/60 p-3 rounded-xl border border-slate-700/60 text-center">
+                        <span class="text-[10px] text-slate-400 block mb-1">ดัชนีความก้าวร้าว (AGI)</span>
+                        <span id="calc-agi" class="text-xl font-bold text-red-400">82.5</span>
+                    </div>
+                    <div class="bg-slate-800/60 p-3 rounded-xl border border-slate-700/60 text-center">
+                        <span class="text-[10px] text-slate-400 block mb-1">OAS Score (0-4)</span>
+                        <span id="calc-oas" class="text-xl font-bold text-amber-400">Level 3</span>
+                    </div>
+                </div>
+            </div>
+
+        </section>
+
+        <!-- Right Column: Visual Canvas & Clinical Explanation (8 cols) -->
+        <section class="lg:col-span-8 space-y-6 flex flex-col justify-between">
+
+            <!-- Graphic Display Screen Canvas -->
+            <div class="custom-glass rounded-2xl border border-slate-700/50 shadow-xl overflow-hidden flex flex-col h-[380px] md:h-[420px] relative">
+                <!-- Canvas Top Bar Status -->
+                <div class="bg-navy-900/80 px-4 py-2.5 border-b border-slate-800 flex justify-between items-center z-10 backdrop-blur-md">
+                    <div class="flex items-center space-x-2">
+                        <span id="status-dot" class="w-3 h-3 rounded-full bg-red-500 animate-pulse"></span>
+                        <span id="status-text" class="text-xs font-bold text-red-400">ผู้ป่วยอาละวาด/ระแวงรุนแรง (Active Agitation)</span>
+                    </div>
+                    <div class="text-[11px] text-slate-400 flex items-center gap-3">
+                        <span><i class="fa-solid fa-heart-pulse text-red-500 mr-1"></i> HR: <span id="hr-display" class="font-bold text-slate-200">135</span> bpm</span>
+                        <span><i class="fa-solid fa-eye text-amber-400 mr-1"></i> Hallucination: <span id="hallu-display" class="font-bold text-slate-200">High</span></span>
+                    </div>
+                </div>
+
+                <!-- Interactive HTML5 Canvas -->
+                <div class="flex-grow w-full h-full relative bg-slate-950">
+                    <canvas id="simCanvas"></canvas>
+
+                    <!-- On-screen Alert Overlay for Critical Danger -->
+                    <div id="danger-overlay" class="absolute bottom-4 left-4 right-4 bg-red-950/80 border border-red-500/50 p-3 rounded-xl backdrop-blur-md text-red-200 text-xs hidden flex items-center justify-between">
+                        <div class="flex items-center gap-2">
+                            <i class="fa-solid fa-triangle-exclamation text-lg text-red-400 animate-bounce"></i>
+                            <span><strong>เตือนอันตราย:</strong> ผู้ป่วยเข้าใกล้ระยะโจมตี และระดับอารมณ์คลั่งสูง เสี่ยงเกิดอันตรายต่อชีวิตบุคลากร!</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Clinical Phenomenon Explanation Box -->
+            <div class="custom-glass rounded-2xl p-5 border border-slate-700/50 shadow-xl space-y-3">
+                <h3 class="text-sm font-bold text-medical-500 flex items-center gap-2">
+                    <i class="fa-solid fa-stethoscope"></i> คำอธิบายปรากฏการณ์พยาบาลจิตเวช (Clinical Interpretation)
+                </h3>
+                <div id="explanation-box" class="bg-slate-900/80 p-4 rounded-xl border border-slate-800 text-xs md:text-sm leading-relaxed text-slate-300">
+                    คำอธิบายปรากฏการณ์จะอัปเดตตามการปรับเปลี่ยนค่า...
+                </div>
+            </div>
+
+        </section>
+
+    </main>
+
+    <!-- Challenge Mission Modal -->
+    <div id="mission-modal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
+        <div class="custom-glass max-w-lg w-full rounded-2xl border border-slate-700 shadow-2xl overflow-hidden">
+            <div class="p-4 bg-gradient-to-r from-amber-600 to-orange-600 text-white flex justify-between items-center">
+                <h3 class="font-bold text-base flex items-center gap-2">
+                    <i class="fa-solid fa-trophy"></i> ภารกิจโจทย์ท้าทาย (Challenge Mission)
+                </h3>
+                <button onclick="closeMissionModal()" class="text-white/80 hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
+            </div>
+
+            <div class="p-6 space-y-4 text-xs md:text-sm">
+                <div class="bg-slate-900/80 p-4 rounded-xl border border-slate-800 space-y-2">
+                    <span class="text-[10px] font-bold text-amber-400 uppercase tracking-wider block">เป้าหมายภารกิจ (Target Mission)</span>
+                    <p id="mission-target-text" class="text-slate-200 font-semibold leading-relaxed">
+                        ปรับค่าตัวแปรเพื่อสยบวิกฤตผู้ป่วยลงให้ได้ <strong>OAS Level 1 หรือ 0</strong> โดยที่ดัชนี AGI ต้องต่ำกว่า <strong>35 คะแนน</strong> และรักษาระยะห่างที่ปลอดภัยอย่างน้อย <strong>2.5 เมตร</strong>
+                    </p>
+                </div>
+
+                <div class="bg-slate-800/50 p-4 rounded-xl space-y-2">
+                    <span class="text-xs font-semibold text-slate-300">สถานะปัจจุบันของคุณ:</span>
+                    <ul class="space-y-1 text-slate-400">
+                        <li class="flex justify-between"><span>ดัชนี AGI:</span> <strong id="m-status-agi" class="text-white">82.5</strong></li>
+                        <li class="flex justify-between"><span>OAS Level:</span> <strong id="m-status-oas" class="text-white">Level 3</strong></li>
+                        <li class="flex justify-between"><span>ระยะห่าง:</span> <strong id="m-status-dist" class="text-white">0.8 m</strong></li>
+                    </ul>
+                </div>
+
+                <div id="mission-feedback" class="hidden p-3 rounded-xl text-center font-bold"></div>
+
+                <div class="flex gap-3">
+                    <button onclick="checkMissionResult()" class="flex-1 py-3 bg-medical-600 hover:bg-medical-700 text-white font-semibold rounded-xl transition shadow-lg">
+                        <i class="fa-solid fa-check-circle mr-1"></i> ตรวจคำตอบ
+                    </button>
+                    <button onclick="generateRandomMission()" class="py-3 px-4 bg-slate-800 hover:bg-slate-700 text-slate-300 font-semibold rounded-xl border border-slate-700 transition">
+                        <i class="fa-solid fa-shuffle"></i> สุ่มโจทย์ใหม่
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-navy-900 border-t border-slate-800 py-3 text-center text-[11px] text-slate-500">
+        สื่อการเรียนรู้ห้องทดลองเสมือนจริง วิทยาศาสตร์การพยาบาลจิตเวชฉุกเฉิน &copy; 2026
+    </footer>
+
+    <!-- JavaScript Logic & Canvas Renderer -->
+    <script>
+        // Canvas & Context Setup
+        const canvas = document.getElementById('simCanvas');
+        const ctx = canvas.getContext('2d');
+
+        // State Variables
+        let stim = 80;   // 10 - 100
+        let tone = 20;   // 0 - 100
+        let dist = 0.8;  // 0.5 - 4.0 meters
+        let agi = 0;
+        let oasLevel = 3;
+
+        // Current Active Mission Target
+        let activeMission = {
+            targetAGI: 35,
+            targetOAS: 1,
+            minDist: 2.0,
+            description: "ปรับค่าตัวแปรเพื่อสยบวิกฤตผู้ป่วยลงให้อยู่ในภาวะปลอดภัย (OAS Level <= 1) โดยที่ดัชนี AGI ต้องต่ำกว่า 35 คะแนน และรักษา Physical Distance ไม่ต่ำกว่า 2.0 เมตร"
+        };
+
+        // Animation Loop Variables
+        let animationFrameId;
+        let pAnimOffset = 0;
+        let nurseX = 100;
+        let patientX = 300;
+
+        // Initialize Canvas Dimensions on Load and Resize
+        function resizeCanvas() {
+            const rect = canvas.parentElement.getBoundingClientRect();
+            canvas.width = rect.width;
+            canvas.height = rect.height;
+        }
+
+        window.addEventListener('resize', () => {
+            resizeCanvas();
+            drawSimulation();
+        });
+
+        // Simulation Calculation Logic
+        function calculateState() {
+            // Formula Calculation
+            // High dist reduces threat, high tone reduces agi, high stim increases agi
+            const distanceFactor = (1 / dist) * 18;
+            agi = Math.max(0, Math.min(100, (stim * 0.45) + distanceFactor - (tone * 0.45) + 15));
+
+            // Determine OAS Level based on AGI
+            if (agi >= 75) {
+                oasLevel = 3; // OAS Level 3: Severe Verbal / Physical Object Aggression
+            } else if (agi >= 50) {
+                oasLevel = 2; // OAS Level 2: Moderate Verbal Aggression
+            } else if (agi >= 25) {
+                oasLevel = 1; // OAS Level 1: Mild Restlessness / Mild Verbal Loudness
+            } else {
+                oasLevel = 0; // OAS Level 0: Calm & Cooperative
+            }
+        }
+
+        // Update UI Text & Visual States
+        function updateSimulation() {
+            // Read Slider Values
+            stim = parseFloat(document.getElementById('slider-stim').value);
+            tone = parseFloat(document.getElementById('slider-tone').value);
+            dist = parseFloat(document.getElementById('slider-dist').value);
+
+            // Update Value Displays
+            document.getElementById('val-stim').innerText = `${stim} %`;
+            document.getElementById('val-tone').innerText = `${tone} %`;
+            document.getElementById('val-dist').innerText = `${dist.toFixed(1)} เมตร`;
+
+            // Calculate Math
+            calculateState();
+
+            // Update Calculated Displays
+            document.getElementById('calc-agi').innerText = agi.toFixed(1);
+            document.getElementById('calc-oas').innerText = `Level ${oasLevel}`;
+
+            // Update Top Status Bar Badge
+            const statusDot = document.getElementById('status-dot');
+            const statusText = document.getElementById('status-text');
+            const hrDisplay = document.getElementById('hr-display');
+            const halluDisplay = document.getElementById('hallu-display');
+            const dangerOverlay = document.getElementById('danger-overlay');
+
+            const simulatedHR = Math.round(70 + (agi * 0.7));
+            hrDisplay.innerText = simulatedHR;
+
+            if (oasLevel === 3) {
+                statusDot.className = "w-3 h-3 rounded-full bg-red-500 animate-pulse";
+                statusText.className = "text-xs font-bold text-red-400";
+                statusText.innerText = "ผู้ป่วยคลั่ง/ก้าวร้าวรุนแรง (Active Violent Crisis - OAS 3)";
+                halluDisplay.innerText = "Severe";
+            } else if (oasLevel === 2) {
+                statusDot.className = "w-3 h-3 rounded-full bg-amber-500 animate-pulse";
+                statusText.className = "text-xs font-bold text-amber-400";
+                statusText.innerText = "ผู้ป่วยเสียงดังโวยวาย/หวาดระแวง (Moderate Agitation - OAS 2)";
+                halluDisplay.innerText = "Moderate";
+            } else if (oasLevel === 1) {
+                statusDot.className = "w-3 h-3 rounded-full bg-yellow-400";
+                statusText.className = "text-xs font-bold text-yellow-300";
+                statusText.innerText = "ผู้ป่วยตึงเครียดกระสับกระส่าย (Mild Tension - OAS 1)";
+                halluDisplay.innerText = "Mild";
+            } else {
+                statusDot.className = "w-3 h-3 rounded-full bg-emerald-500";
+                statusText.className = "text-xs font-bold text-emerald-400";
+                statusText.innerText = "ผู้ป่วยสงบนิ่ง/ร่วมมือ (Calm & Controlled - OAS 0)";
+                halluDisplay.innerText = "Minimal";
+            }
+
+            // Danger Overlay Visibility
+            if (dist < 1.0 && oasLevel >= 2) {
+                dangerOverlay.classList.remove('hidden');
+            } else {
+                dangerOverlay.classList.add('hidden');
+            }
+
+            // Dynamic Clinical Interpretation Update
+            updateExplanationText();
+        }
+
+        function updateExplanationText() {
+            const expBox = document.getElementById('explanation-box');
+            let text = "";
+
+            if (oasLevel === 3) {
+                text = `<span class="text-red-400 font-bold"><i class="fa-solid fa-triangle-exclamation mr-1"></i> สภาวะวิกฤตขั้นรุนแรง (OAS Level 3):</span> สาร Methamphetamine กระตุ้น Dopamine ในสมองสูงมากร่วมกับสิ่งกระตุ้นสิ่งแวดล้อมปะทุขึ้น ผู้ป่วยมีภาวะหวาดระแวงอย่างรุนแรง (Paranoid Delusion) เห็นภาพหลอน การเข้าใกล้ระยะ < 1 เมตร หรือใช้น้ำเสียงสั่งการจะถูกตีความว่าเป็นการคุกคามชีวิตทันที <u>ข้อควรปฏิบัติ:</u> ถอยเว้นระยะห่าง > 2.5 เมตร นำสิ่งของอันตรายออก และเตรียมทีมสยบวิกฤต 5 คน`;
+            } else if (oasLevel === 2) {
+                text = `<span class="text-amber-400 font-bold"><i class="fa-solid fa-circle-exclamation mr-1"></i> สภาวะก้าวร้าวระดับปานกลาง (OAS Level 2):</span> ผู้ป่วยเริ่มตะโกนข่มขู่ โวยวาย แต่ยังไม่มีการทำร้ายร่างกายโดยตรง หากพยาบาลใช้น้ำเสียงสงบนิ่ง (De-escalation > 60%) และเปิดโอกาสให้ผู้ป่วยได้ระบายความรู้สึก จะช่วยลดระดับ Dopamine & Arousal ในสมองลงได้อย่างชัดเจน`;
+            } else if (oasLevel === 1) {
+                text = `<span class="text-yellow-300 font-bold"><i class="fa-solid fa-info-circle mr-1"></i> สภาวะกระสับกระส่าย (OAS Level 1):</span> ผู้ป่วยเริ่มสงบลง สามารถรับฟังคำสั่งง่ายๆ ได้ดี การรักษาระยะห่างที่เหมาะสม (2-3 เมตร) ช่วยให้ผู้ป่วยรู้สึกปลอดภัย ไม่ถูกคุกคาม`;
+            } else {
+                text = `<span class="text-emerald-400 font-bold"><i class="fa-solid fa-circle-check mr-1"></i> สภาวะควบคุมได้สมบูรณ์ (OAS Level 0):</span> เทคนิคการพยาบาลประสบผลสำเร็จระดับสูงสุด! การลดสิ่งกระตุ้นร่วมกับการใช้น้ำเสียง De-escalation นุ่มนวล ทำให้เกิดสัมพันธภาพเพื่อการบำบัด (Therapeutic Relationship) ผู้ป่วยพร้อมรับการตรวจรักษาและการบริหารยาอย่างปลอดภัย`;
+            }
+
+            expBox.innerHTML = text;
+        }
+
+        function resetSliders() {
+            document.getElementById('slider-stim').value = 80;
+            document.getElementById('slider-tone').value = 20;
+            document.getElementById('slider-dist').value = 0.8;
+            updateSimulation();
+        }
+
+        // HTML5 Canvas Rendering Engine
+        function drawSimulation() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            const centerY = canvas.height / 2 + 20;
+            const widthScale = canvas.width / 400;
+
+            // Map Dist slider (0.5m - 4.0m) to Canvas Pixels
+            nurseX = 60 * widthScale;
+            patientX = nurseX + (dist * 70 * widthScale);
+
+            // Draw Background Environment Grid / Floor
+            ctx.strokeStyle = '#1e293b';
+            ctx.lineWidth = 1;
+            for (let x = 0; x < canvas.width; x += 30) {
+                ctx.beginPath();
+                ctx.moveTo(x, 0);
+                ctx.lineTo(x, canvas.height);
+                ctx.stroke();
+            }
+
+            // Draw Distance Zone Line & Indicator
+            ctx.beginPath();
+            ctx.setLineDash([5, 5]);
+            ctx.strokeStyle = dist < 1.5 ? '#ef4444' : '#10b981';
+            ctx.moveTo(nurseX, centerY + 50);
+            ctx.lineTo(patientX, centerY + 50);
+            ctx.stroke();
+            ctx.setLineDash([]);
+
+            // Distance Text Label
+            ctx.fillStyle = dist < 1.5 ? '#fca5a5' : '#6ee7b7';
+            ctx.font = '12px Sarabun';
+            ctx.textAlign = 'center';
+            ctx.fillText(`ระยะห่าง: ${dist.toFixed(1)} m`, (nurseX + patientX) / 2, centerY + 70);
+
+            // Draw Stimulation Aura Waves if high stimulation
+            if (stim > 50) {
+                ctx.beginPath();
+                ctx.arc(patientX, centerY - 20, (stim * 0.8), 0, Math.PI * 2);
+                ctx.fillStyle = `rgba(239, 68, 68, ${stim / 800})`;
+                ctx.fill();
+            }
+
+            // Draw Nurse Character
+            drawNurse(nurseX, centerY);
+
+            // Draw Patient Character with Agitation Animation
+            drawPatient(patientX, centerY);
+
+            // Hallucination Effect Animation overlay if AGI is high
+            if (agi > 60) {
+                pAnimOffset += 0.1;
+                ctx.strokeStyle = 'rgba(168, 85, 247, 0.4)';
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+                ctx.arc(patientX + Math.sin(pAnimOffset) * 5, centerY - 50, 40 + Math.cos(pAnimOffset) * 10, 0, Math.PI * 2);
+                ctx.stroke();
+            }
+
+            requestAnimationFrame(drawSimulation);
+        }
+
+        // Draw Nurse Sprite
+        function drawNurse(x, y) {
+            // Head
+            ctx.fillStyle = '#e2e8f0';
+            ctx.beginPath();
+            ctx.arc(x, y - 50, 16, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Nurse Cap
+            ctx.fillStyle = '#0284c7';
+            ctx.fillRect(x - 12, y - 68, 24, 6);
+
+            // Body (Medical Uniform)
+            ctx.fillStyle = '#0ea5e9';
+            ctx.beginPath();
+            ctx.roundRect(x - 14, y - 32, 28, 45, 6);
+            ctx.fill();
+
+            // Calming Hand Pose Signal
+            ctx.strokeStyle = '#e2e8f0';
+            ctx.lineWidth = 4;
+            ctx.beginPath();
+            ctx.moveTo(x + 10, y - 20);
+            ctx.lineTo(x + 24, y - 15); // Hand pointing gently forward
+            ctx.stroke();
+
+            // Label
+            ctx.fillStyle = '#38bdf8';
+            ctx.font = 'bold 12px Kanit';
+            ctx.textAlign = 'center';
+            ctx.fillText('พยาบาล', x, y + 30);
+        }
+
+        // Draw Patient Sprite with Agitation Effects
+        function drawPatient(x, y) {
+            // Shake effect based on AGI
+            const shakeX = (Math.random() - 0.5) * (agi / 15);
+            const shakeY = (Math.random() - 0.5) * (agi / 15);
+            const px = x + shakeX;
+            const py = y + shakeY;
+
+            // Aggressive Red Aura
+            if (oasLevel >= 2) {
+                ctx.fillStyle = oasLevel === 3 ? 'rgba(239, 68, 68, 0.3)' : 'rgba(245, 158, 11, 0.2)';
+                ctx.beginPath();
+                ctx.arc(px, py - 30, 35, 0, Math.PI * 2);
+                ctx.fill();
+            }
+
+            // Head
+            ctx.fillStyle = oasLevel >= 2 ? '#fca5a5' : '#fed7aa';
+            ctx.beginPath();
+            ctx.arc(px, py - 50, 16, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Angry / Hallucinating Eyes Expression
+            ctx.fillStyle = oasLevel >= 2 ? '#dc2626' : '#475569';
+            ctx.beginPath();
+            ctx.arc(px - 5, py - 53, 3, 0, Math.PI * 2);
+            ctx.arc(px + 5, py - 53, 3, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Body
+            ctx.fillStyle = '#475569';
+            ctx.beginPath();
+            ctx.roundRect(px - 15, py - 32, 30, 45, 6);
+            ctx.fill();
+
+            // Aggressive Arm Gestures based on OAS Level
+            ctx.strokeStyle = '#fca5a5';
+            ctx.lineWidth = 4;
+            ctx.beginPath();
+            if (oasLevel === 3) {
+                // Arms raised shouting / violent
+                ctx.moveTo(px - 12, py - 25);
+                ctx.lineTo(px - 25, py - 50);
+                ctx.moveTo(px + 12, py - 25);
+                ctx.lineTo(px + 28, py - 48);
+            } else if (oasLevel === 2) {
+                // Pointing threat
+                ctx.moveTo(px - 12, py - 25);
+                ctx.lineTo(px - 22, py - 15);
+                ctx.moveTo(px + 12, py - 25);
+                ctx.lineTo(px + 25, py - 30);
+            } else {
+                // Arms down
+                ctx.moveTo(px - 12, py - 25);
+                ctx.lineTo(px - 18, py - 5);
+                ctx.moveTo(px + 12, py - 25);
+                ctx.lineTo(px + 18, py - 5);
+            }
+            ctx.stroke();
+
+            // Label
+            ctx.fillStyle = oasLevel >= 2 ? '#f87171' : '#cbd5e1';
+            ctx.font = 'bold 12px Kanit';
+            ctx.textAlign = 'center';
+            ctx.fillText(`ผู้ป่วย (OAS ${oasLevel})`, px, py + 30);
+        }
+
+        // Mission Modal Logic
+        function openMissionModal() {
+            document.getElementById('m-status-agi').innerText = agi.toFixed(1);
+            document.getElementById('m-status-oas').innerText = `Level ${oasLevel}`;
+            document.getElementById('m-status-dist').innerText = `${dist.toFixed(1)} m`;
+
+            const fb = document.getElementById('mission-feedback');
+            fb.classList.add('hidden');
+
+            document.getElementById('mission-modal').classList.remove('hidden');
+        }
+
+        function closeMissionModal() {
+            document.getElementById('mission-modal').classList.add('hidden');
+        }
+
+        function checkMissionResult() {
+            const fb = document.getElementById('mission-feedback');
+            fb.classList.remove('hidden');
+
+            const isAGIPassed = agi <= activeMission.targetAGI;
+            const isOASPassed = oasLevel <= activeMission.targetOAS;
+            const isDistPassed = dist >= activeMission.minDist;
+
+            if (isAGIPassed && isOASPassed && isDistPassed) {
+                fb.className = "p-3 rounded-xl text-center font-bold bg-emerald-950/80 border border-emerald-500 text-emerald-300 text-xs md:text-sm";
+                fb.innerHTML = `<i class="fa-solid fa-circle-check text-lg mr-1"></i> ยินดีด้วย! คุณผ่านภารกิจสำเร็จตามหลักการพยาบาลฉุกเฉินจิตเวช!`;
+            } else {
+                fb.className = "p-3 rounded-xl text-center font-bold bg-red-950/80 border border-red-500 text-red-300 text-xs md:text-sm";
+                let failReason = "ยังไม่ผ่านภารกิจ: ";
+                if (!isAGIPassed) failReason += `ดัชนี AGI ยังสูงเกินเป้าหมาย (${agi.toFixed(1)} / ${activeMission.targetAGI}) `;
+                if (!isOASPassed) failReason += `OAS Level ยังสูงเกินไป `;
+                if (!isDistPassed) failReason += `ระยะห่างใกล้อันตรายเกินไป `;
+                fb.innerHTML = `<i class="fa-solid fa-circle-xmark text-lg mr-1"></i> ${failReason}`;
+            }
+
+            // Update live modal stats
+            document.getElementById('m-status-agi').innerText = agi.toFixed(1);
+            document.getElementById('m-status-oas').innerText = `Level ${oasLevel}`;
+            document.getElementById('m-status-dist').innerText = `${dist.toFixed(1)} m`;
+        }
+
+        function generateRandomMission() {
+            const missions = [
+                {
+                    targetAGI: 35,
+                    targetOAS: 1,
+                    minDist: 2.0,
+                    description: "ภารกิจ 1: สยบวิกฤตผู้ป่วยให้เข้าสู่ภาวะปลอดภัย (OAS Level <= 1) โดยที่ AGI < 35 และรักษาระยะห่างไม่ต่ำกว่า 2.0 เมตร"
+                },
+                {
+                    targetAGI: 20,
+                    targetOAS: 0,
+                    minDist: 2.5,
+                    description: "ภารกิจ 2 (ขั้นสูง): สร้างสัมพันธภาพสมบูรณ์ สยบอาการผู้ป่วยให้อยู่ในสภาวะสงบนิ่ง (OAS Level 0) โดยที่ AGI < 20 และรักษาระยะห่างปลอดภัย 2.5 เมตรขึ้นไป"
+                },
+                {
+                    targetAGI: 45,
+                    targetOAS: 2,
+                    minDist: 3.0,
+                    description: "ภารกิจ 3 (ควบคุมสิ่งแวดล้อม): ลดความก้าวร้าวรุนแรงในระยะไกล โดยรักษา Physical Distance ไม่ต่ำกว่า 3.0 เมตร และลด AGI ให้ต่ำกว่า 45"
+                }
+            ];
+
+            const randomIndex = Math.floor(Math.random() * missions.length);
+            activeMission = missions[randomIndex];
+
+            document.getElementById('mission-target-text').innerHTML = activeMission.description;
+            document.getElementById('mission-feedback').classList.add('hidden');
+        }
+
+        // Window Onload Initialization
+        window.onload = function() {
+            resizeCanvas();
+            updateSimulation();
+            drawSimulation();
+        };
+    </script>
+</body>
+</html>
